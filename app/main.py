@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.db.session import SessionLocal
+from app.api.routes.defects import router as defects
 
 app = FastAPI(title="Defect Tracker API")
 
@@ -10,3 +10,5 @@ def read_root():
 @app.get("/health")
 def health_check():
     return {"status": "db ok"}
+
+app.include_router(defects, prefix="/api")
