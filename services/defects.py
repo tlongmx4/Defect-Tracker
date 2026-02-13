@@ -1,3 +1,4 @@
+from uuid import UUID
 from app.db.models import Defect
 from sqlalchemy.orm import Session
 
@@ -22,3 +23,6 @@ def create_defect(db: Session, defect_data: dict) -> Defect:
     db.commit()
     db.refresh(new_defect)
     return new_defect
+
+def get_defect(db: Session, defect_id: UUID) -> Defect:
+    return db.query(Defect).filter(Defect.id == defect_id).first()
