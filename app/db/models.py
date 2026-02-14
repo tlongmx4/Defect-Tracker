@@ -17,4 +17,5 @@ class Defect(Base):
     absn = Column(Text, nullable=False)
     assigned_to = Column(Text, nullable=True)
     status = Column(Text, nullable=False)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 

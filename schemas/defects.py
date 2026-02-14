@@ -15,6 +15,7 @@ class DefectCreate(BaseModel):
 class DefectOut(BaseModel):
     id: UUID
     created_at: datetime
+    updated_at: datetime
     reported_by: str
     category: str
     subcategory: Optional[str] = None
