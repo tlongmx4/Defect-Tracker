@@ -32,3 +32,11 @@ class DefectListOut(BaseModel):
     total: int
 
     model_config = ConfigDict(from_attributes=True)
+
+class DefectUpdate(BaseModel):
+    category: Optional[str] = None
+    subcategory: Optional[str] = None
+    description: Optional[str] = None
+    assigned_to: Optional[str] = None
+    status: Optional[str] = None
+    

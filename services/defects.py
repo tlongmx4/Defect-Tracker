@@ -26,3 +26,16 @@ def create_defect(db: Session, defect_data: dict) -> Defect:
 
 def get_defect(db: Session, defect_id: UUID) -> Defect:
     return db.query(Defect).filter(Defect.id == defect_id).first()
+
+def update_defect(db: Session, defect_id: UUID, update_data: dict) -> Defect:
+    defect = db.query(Defect).filter(Defect.id == defect_id).first()
+    if not defect:
+        return None
+    
+    for key, value in update_data.items():
+        if value is not None:
+            setattr(defect, key, value)
+    
+    db.commit()
+    db.refresh(defect)
+    return defect
