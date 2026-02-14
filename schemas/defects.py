@@ -29,6 +29,8 @@ class DefectListOut(BaseModel):
     items: List[DefectOut]
     limit: int
     offset: int
+    status: Optional[str] = None
+    category: Optional[str] = None
     total: int
 
     model_config = ConfigDict(from_attributes=True)
@@ -39,4 +41,3 @@ class DefectUpdate(BaseModel):
     description: Optional[str] = None
     assigned_to: Optional[str] = None
     status: Optional[str] = None
-    

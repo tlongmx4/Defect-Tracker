@@ -8,9 +8,9 @@ from services.defects import list_defects, create_defect, get_defect, update_def
 router = APIRouter(prefix="/defects", tags=["defects"])
 
 @router.get("", response_model=DefectListOut)
-def get_defects(limit: int = 50, offset: int = 0, db: Session = Depends(get_db)):
-    items, total = list_defects(db, limit, offset)
-    return DefectListOut(items=items, limit=limit, offset=offset, total=total)
+def get_defects(limit: int = 50, offset: int = 0, status: str = None, category: str = None, db: Session = Depends(get_db)):
+    items, total = list_defects(db, limit, offset, status=status, category=category)
+    return DefectListOut(items=items, limit=limit, offset=offset, total=total, status=status, category=category)
 
 @router.post("", response_model=DefectOut, status_code=201)
 def create_new_defect(defect_data: DefectCreate, db: Session = Depends(get_db)):

@@ -2,8 +2,12 @@ from uuid import UUID
 from app.db.models import Defect
 from sqlalchemy.orm import Session
 
-def list_defects(db: Session, limit: int, offset: int):
+def list_defects(db: Session, limit: int, offset: int, status: str = None, category: str = None):
     base_query = db.query(Defect)
+    if status is not None:
+        base_query = base_query.filter(Defect.status == status)
+    if category is not None:
+        base_query = base_query.filter(Defect.category == category)
     total = base_query.count()
     items = base_query.order_by(Defect.created_at.desc()).offset(offset).limit(limit).all()
     return items, total
