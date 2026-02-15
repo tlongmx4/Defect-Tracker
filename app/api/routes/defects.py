@@ -28,8 +28,8 @@ def get_defect_by_id(defect_id: UUID, db: Session = Depends(get_db)):
     return defect
 
 @router.patch("/{defect_id}", response_model=DefectOut)
-def update_defect_by_id(defect_id: UUID, update_data: DefectUpdate, db: Session = Depends(get_db), api_key: str = Depends(get_api_key)):
-    updated_defect = update_defect(db, defect_id, update_data.model_dump(exclude_unset=True))
+def update_defect_by_id(defect_id: UUID, update_data: DefectUpdate, db: Session = Depends(get_db), api_key: str = Depends(get_api_key), updated_by: str = Depends(get_api_key)):
+    updated_defect = update_defect(db, defect_id, update_data.model_dump(exclude_unset=True), updated_by=updated_by)
     if not updated_defect:
         raise HTTPException(status_code=404, detail="Defect not found")
     return updated_defect

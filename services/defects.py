@@ -44,11 +44,11 @@ def create_defect(db: Session, defect_data: dict) -> Defect:
 def get_defect(db: Session, defect_id: UUID) -> Defect:
     return db.query(Defect).filter(Defect.id == defect_id).first()
 
-def update_defect(db: Session, defect_id: UUID, update_data: dict) -> Defect:
+def update_defect(db: Session, defect_id: UUID, update_data: dict, updated_by: str) -> Defect:
     defect = db.query(Defect).filter(Defect.id == defect_id).first()
     if not defect:
         return None
-    
+    defect.updated_by = updated_by
     for key, value in update_data.items():
         if value is not None:
             setattr(defect, key, value)
