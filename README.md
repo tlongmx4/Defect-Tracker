@@ -131,5 +131,4 @@ updated_by field
 Role-based authentication
 Audit log table for defect status changes
 Full-text search
-Sorting support
 Migration management (Alembic)

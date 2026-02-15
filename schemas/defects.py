@@ -2,7 +2,6 @@ from pydantic import BaseModel, ConfigDict
 from uuid import UUID
 from datetime import datetime
 from typing import Optional, List
-
 from app.domains.enums import DefectStatus
 
 class DefectCreate(BaseModel):
@@ -32,6 +31,7 @@ class DefectListOut(BaseModel):
     items: List[DefectOut]
     limit: int
     offset: int
+    sort_by: Optional[str] = None
     status: Optional[str] = None
     category: Optional[str] = None
     total: int

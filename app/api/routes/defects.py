@@ -1,15 +1,17 @@
 from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException
+from app.db.models import Defect
 from app.db.session import get_db
 from sqlalchemy.orm import Session
 from schemas.defects import DefectListOut, DefectCreate, DefectOut, DefectUpdate
 from services.defects import list_defects, create_defect, get_defect, update_defect
+from services.defect_query import SORT_FIELDS
 
 router = APIRouter(prefix="/defects", tags=["defects"])
 
 @router.get("", response_model=DefectListOut)
-def get_defects(limit: int = 50, offset: int = 0, status: str = None, category: str = None, db: Session = Depends(get_db)):
-    items, total = list_defects(db, limit, offset, status=status, category=category)
+def get_defects(limit: int = 50, offset: int = 0, status: str = None, category: str = None, sort_by: str = None, db: Session = Depends(get_db)):
+    items, total = list_defects(db, limit, offset, status=status, category=category, sort_by=sort_by)
     return DefectListOut(items=items, limit=limit, offset=offset, total=total, status=status, category=category)
 
 @router.post("", response_model=DefectOut, status_code=201)
@@ -30,3 +32,4 @@ def update_defect_by_id(defect_id: UUID, update_data: DefectUpdate, db: Session 
     if not updated_defect:
         raise HTTPException(status_code=404, detail="Defect not found")
     return updated_defect
+

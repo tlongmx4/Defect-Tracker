@@ -1,17 +1,30 @@
+from fastapi import HTTPException
 from uuid import UUID
 from app.db.models import Defect
 from sqlalchemy.orm import Session
+from services.defect_query import SORT_FIELDS
 
-def list_defects(db: Session, limit: int, offset: int, status: str = None, category: str = None):
+def list_defects(db: Session, limit: int, offset: int, status: str = None, category: str = None, sort_by: str = None):
     base_query = db.query(Defect)
     if status is not None:
         base_query = base_query.filter(Defect.status == status)
     if category is not None:
         base_query = base_query.filter(Defect.category == category)
+    if sort_by is not None:
+        descending = sort_by.startswith("-")
+        field_name = sort_by[1:] if descending else sort_by
+        if field_name not in SORT_FIELDS:
+            raise HTTPException(status_code=400, detail=f"Invalid sort field: {field_name}")
+        column = SORT_FIELDS[field_name]
+        order_by = column.desc()
+        if not descending:
+            order_by = column.asc()
+        base_query = base_query.order_by(order_by)
+    else:
+        base_query = base_query.order_by(Defect.created_at.desc())
     total = base_query.count()
-    items = base_query.order_by(Defect.created_at.desc()).offset(offset).limit(limit).all()
+    items = base_query.offset(offset).limit(limit).all()
     return items, total
-    
 
 def create_defect(db: Session, defect_data: dict) -> Defect:
     new_defect = Defect(
