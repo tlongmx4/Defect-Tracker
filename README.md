@@ -1,131 +1,178 @@
 Defect Tracker API
-Overview
 
-Defect Tracker is a backend API designed to manage and track production defects in a structured, queryable system.
-It models real-world quality workflows by supporting:
-Defect creation
-Status updates
-Assignment tracking
-Pagination and filtering
-UUID-based identifiers
-Layered architecture (routes → services → models)
-This project focuses on clean backend structure and maintainable service-layer design.
+A backend service for tracking manufacturing defects, including authenticated updates, status transition auditing, and query filtering.
 
-Tech Stack
+This project demonstrates layered backend architecture, API design best practices, and controlled data integrity using FastAPI and PostgreSQL.
 
-Python 3.14
-FastAPI
-SQLAlchemy
-PostgreSQL (Dockerized)
-Pydantic v2
-UUID primary keys
+🚀 Features
 
-Architecture
+Create, read, and update defects
 
-The project follows a layered architecture:
+API key authentication for write operations
 
-app/
+Enum validation for defect status (open, repaired)
 
-db/
-models.py (SQLAlchemy models)
-session.py (DB session management)
+Filtering by status and category
 
-api/
-routes/
-defects.py (HTTP layer)
+Validated sorting (ascending / descending)
 
-services/
-defects.py (business logic)
+Pagination support (limit, offset)
 
-schemas/
-defects.py (Pydantic request/response models)
-main.py (application entry point)
-Separation of concerns:
-Routes handle HTTP + validation
-Services handle business logic + DB interaction
-Models define persistence structure
-Schemas define API contracts
+Automatic lifecycle timestamps (created_at, updated_at)
 
-Features
+Actor tracking via updated_by
 
-Create Defect
+Audit logging for defect status transitions
+
+Endpoint for retrieving audit history per defect
+
+🏗 Architecture Overview
+
+The service follows a clean layered architecture:
+
+routes/        → HTTP layer (FastAPI endpoints)
+schemas/       → Pydantic request/response models
+services/      → Business logic and domain rules
+db/models.py   → SQLAlchemy ORM models
+PostgreSQL     → Persistent storage
+
+
+Key design decisions:
+
+Business logic lives in the service layer (not routes).
+
+Status transitions trigger audit events inside the update service.
+
+Authentication is implemented via dependency injection.
+
+Sorting is validated against a controlled field map to prevent unsafe queries.
+
+PATCH uses exclude_unset=True to support partial updates correctly.
+
+🔐 Authentication
+
+Write operations require an API key sent via header:
+
+X-API-Key: <your_api_key>
+
+
+Protected endpoints:
 
 POST /api/defects
-Creates a new defect with:
-reported_by
-category
-subcategory
-description
-absn
-assigned_to
-status
-Returns full defect object with UUID and created_at timestamp.
-List Defects (Paginated + Filtered)
 
+PATCH /api/defects/{defect_id}
+
+Read operations are currently public.
+
+📡 API Endpoints
+List Defects
 GET /api/defects
-Supports:
-limit (default 50)
+
+
+Query parameters:
+
+limit
+
 offset
-status (optional filter)
+
+status
+
+category
+
+sort_by (supports -field for descending)
 
 Example:
 
-/api/defects?status=open
+GET /api/defects?status=open&sort_by=-updated_at
 
-Returns:
+Create Defect (Auth Required)
+POST /api/defects
 
-{
-items: [...],
-limit: 50,
-offset: 0,
-total: 3
-}
-Retrieve Defect by ID
-GET /api/defects/{defect_id}
-UUID validated automatically
-Returns 404 if not found
-Partial Update (PATCH)
+Update Defect (Auth Required)
 PATCH /api/defects/{defect_id}
-Supports partial updates using Pydantic's exclude_unset=True.
 
-Allows updating:
 
-status
-assigned_to
-description
-category
-subcategory
-Returns updated defect object.
+Automatically:
 
-Design Decisions
+Updates updated_at
 
-UUID Primary Keys
-Using UUIDs instead of integers for:
-distributed system compatibility
-non-sequential identifiers
-production-style data modeling
-Service Layer Pattern
-Database queries are isolated in service functions to:
-decouple HTTP layer from business logic
-simplify testing
-improve maintainability
-Filtered Query Counting
-Pagination total reflects filtered results, not full table size.
+Sets updated_by
 
-Running Locally
-1. Start Postgres via Docker
-docker compose up -d
-2. Create virtual environment
-python -m venv .venv
-source .venv/bin/activate
-3. Install dependencies
-pip install -r requirements.txt
-4. Run API
-uvicorn app.main:app --reload
-5. Open Swagger Docs
-http://localhost:8000/docs
+Creates an audit log entry if status changes
 
-Future Enhancements
+Get Defect Audit History
+GET /api/defects/{defect_id}/audit
+
+
+Returns status transition history ordered by most recent change.
+
+🧾 Example Response
+{
+  "id": "81c99e5d-0282-43fa-84d8-ca9ebf6c67e9",
+  "created_at": "2026-02-15T00:20:05.286848Z",
+  "updated_at": "2026-02-15T00:20:05.286848Z",
+  "reported_by": "audit 3",
+  "category": "loose",
+  "subcategory": "not torqued",
+  "description": "loose flywheel",
+  "absn": "3540",
+  "assigned_to": "assem-tool",
+  "status": "open",
+  "updated_by": "Demo User"
+}
+
+🗂 Audit Log Model
+
+Each status change creates an audit entry containing:
+
+defect_id
+
+changed_by
+
+old_status
+
+new_status
+
+changed_at
+
+This ensures traceability of state transitions.
+
+🛠 Tech Stack
+
+FastAPI
+
+SQLAlchemy
+
+PostgreSQL
+
+Docker
+
+Pydantic
+
+🔮 Future Enhancements
+
+Role-based authorization
+
+Soft deletes
 
 Full-text search
-Migration management (Alembic)
+
+Alembic migrations
+
+CI/CD integration
+
+🎯 Purpose
+
+This project demonstrates backend architecture fundamentals:
+
+Clean separation of concerns
+
+Safe query construction
+
+Authentication and identity tracking
+
+Event-driven audit logging
+
+Correct HTTP semantics
+
+Controlled domain validation
