@@ -127,7 +127,5 @@ http://localhost:8000/docs
 
 Future Enhancements
 
-updated_by field
-Audit log table for defect status changes
 Full-text search
 Migration management (Alembic)
