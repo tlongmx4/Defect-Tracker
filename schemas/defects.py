@@ -3,6 +3,8 @@ from uuid import UUID
 from datetime import datetime
 from typing import Optional, List
 
+from app.domains.enums import DefectStatus
+
 class DefectCreate(BaseModel):
     reported_by: str
     category: str
@@ -10,7 +12,7 @@ class DefectCreate(BaseModel):
     description: Optional[str] = None
     absn: str
     assigned_to: Optional[str] = None
-    status: str
+    status: DefectStatus
 
 class DefectOut(BaseModel):
     id: UUID
@@ -22,7 +24,7 @@ class DefectOut(BaseModel):
     description: Optional[str] = None
     absn: str
     assigned_to: Optional[str] = None
-    status: str
+    status: DefectStatus
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -41,4 +43,4 @@ class DefectUpdate(BaseModel):
     subcategory: Optional[str] = None
     description: Optional[str] = None
     assigned_to: Optional[str] = None
-    status: Optional[str] = None
+    status: Optional[DefectStatus] = None
