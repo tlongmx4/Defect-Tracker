@@ -45,3 +45,13 @@ class DefectUpdate(BaseModel):
     description: Optional[str] = None
     assigned_to: Optional[str] = None
     status: Optional[DefectStatus] = None
+
+class DefectAuditLogOut(BaseModel):
+    id: UUID
+    defect_id: UUID
+    changed_at: datetime
+    changed_by: str
+    old_status: str
+    new_status: str
+
+    model_config = ConfigDict(from_attributes=True)

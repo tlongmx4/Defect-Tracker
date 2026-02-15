@@ -1,8 +1,9 @@
 from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException
 from app.core.auth import get_api_key
-from app.db.models import Defect
+from app.db.models import Defect, DefectAuditLog
 from app.db.session import get_db
+from schemas.defects import DefectListOut, DefectCreate, DefectOut, DefectUpdate, DefectAuditLogOut
 from sqlalchemy.orm import Session
 from schemas.defects import DefectListOut, DefectCreate, DefectOut, DefectUpdate
 from services.defects import list_defects, create_defect, get_defect, update_defect
@@ -28,9 +29,10 @@ def get_defect_by_id(defect_id: UUID, db: Session = Depends(get_db)):
     return defect
 
 @router.patch("/{defect_id}", response_model=DefectOut)
-def update_defect_by_id(defect_id: UUID, update_data: DefectUpdate, db: Session = Depends(get_db), api_key: str = Depends(get_api_key), updated_by: str = Depends(get_api_key)):
+def update_defect_by_id(defect_id: UUID, update_data: DefectUpdate, db: Session = Depends(get_db), updated_by: str = Depends(get_api_key)):
     updated_defect = update_defect(db, defect_id, update_data.model_dump(exclude_unset=True), updated_by=updated_by)
     if not updated_defect:
         raise HTTPException(status_code=404, detail="Defect not found")
     return updated_defect
+    
 

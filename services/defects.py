@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from uuid import UUID
-from app.db.models import Defect
+from app.db.models import Defect, DefectAuditLog
 from sqlalchemy.orm import Session
 from services.defect_query import SORT_FIELDS
 
@@ -48,10 +48,20 @@ def update_defect(db: Session, defect_id: UUID, update_data: dict, updated_by: s
     defect = db.query(Defect).filter(Defect.id == defect_id).first()
     if not defect:
         return None
+    old_status = defect.status
     defect.updated_by = updated_by
     for key, value in update_data.items():
         if value is not None:
             setattr(defect, key, value)
+    new_status = defect.status
+    if 'status' in update_data and old_status != new_status:
+        audit_log_entry = DefectAuditLog(
+            defect_id=defect_id,
+            changed_by=updated_by,
+            old_status=old_status,
+            new_status=new_status
+        )
+        db.add(audit_log_entry)
     
     db.commit()
     db.refresh(defect)
