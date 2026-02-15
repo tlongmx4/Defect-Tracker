@@ -35,4 +35,12 @@ def update_defect_by_id(defect_id: UUID, update_data: DefectUpdate, db: Session 
         raise HTTPException(status_code=404, detail="Defect not found")
     return updated_defect
     
+@router.get("/{defect_id}/audit", response_model=list[DefectAuditLogOut])
+def get_defect_audit_log(defect_id: UUID, db: Session = Depends(get_db)):
+    audit_log_entries = db.query(DefectAuditLog).filter(DefectAuditLog.defect_id == defect_id).order_by(DefectAuditLog.changed_at.desc()).all()
+    if not audit_log_entries:
+        raise HTTPException(status_code=404, detail="No audit log entries found for this defect")
+    else:
+        return audit_log_entries
+
 
