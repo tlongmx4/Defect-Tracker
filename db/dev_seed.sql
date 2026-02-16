@@ -14,3 +14,4 @@ INSERT INTO defects (
 ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '2024-01-05T09:10:00Z', 'auditor_3', 'wrong', 'wrong_part', 'Wrong fastener used', '0000', NULL, 'open'),
 ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', '2024-01-06T07:55:00Z', 'auditor_4', 'damaged', 'crack', 'Crack near mounting point', '3452', 'operator_6', 'repaired'),
 ('cccccccc-cccc-cccc-cccc-cccccccccccc', '2024-01-06T08:40:00Z', 'auditor_2', 'damaged', 'scratch', 'Scratch on painted surface', '3471', NULL, 'open');
+

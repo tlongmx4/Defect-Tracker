@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from app.api.routes.defects import router as defects
 from app.db.session import engine
 from app.db.base import Base
-from app.db import models
+from app.api.routes import auth
 
 app = FastAPI(title="Defect Tracker API")
 
@@ -19,4 +19,5 @@ def health_check():
     return {"status": "db ok"}
 
 app.include_router(defects, prefix="/api")
+app.include_router(auth.router, prefix="/api")
 
