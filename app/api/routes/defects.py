@@ -1,6 +1,6 @@
 from uuid import UUID
-from fastapi import APIRouter, Depends, HTTPException
-from app.core.auth import get_api_key
+from fastapi import APIRouter, Depends, HTTPException, Depends
+from app.core.auth import get_api_key, require_scopes
 from app.db.models import Defect, DefectAuditLog
 from app.db.session import get_db
 from schemas.defects import DefectListOut, DefectCreate, DefectOut, DefectUpdate, DefectAuditLogOut
@@ -11,7 +11,7 @@ from services.defect_query import SORT_FIELDS
 
 router = APIRouter(prefix="/defects", tags=["defects"])
 
-@router.get("", response_model=DefectListOut)
+@router.get("", dependencies=[Depends(require_scopes(["quality:defects:read"]))], response_model=DefectListOut)
 def get_defects(limit: int = 50, offset: int = 0, status: str = None, category: str = None, sort_by: str = None, db: Session = Depends(get_db)):
     items, total = list_defects(db, limit, offset, status=status, category=category, sort_by=sort_by)
     return DefectListOut(items=items, limit=limit, offset=offset, total=total, status=status, category=category)
