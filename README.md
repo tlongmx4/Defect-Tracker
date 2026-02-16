@@ -176,3 +176,7 @@ Event-driven audit logging
 Correct HTTP semantics
 
 Controlled domain validation
+
+Architectural Notes
+
+This project evolved from a broader operational event modeling exploration (see archived repository: incident-ops). Core architectural principles from that experiment have been refined and applied here in a focused manufacturing quality domain.
