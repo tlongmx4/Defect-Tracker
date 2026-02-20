@@ -29,6 +29,16 @@ def update_incident(db: Session, incident_id: UUID, update_data: dict, current_u
     incident = db.query(SafetyIncident).filter(SafetyIncident.id == incident_id).first()
     if not incident:
         return None
+    
+    if "status" in update_data:
+        raise ValueError("Use transition_status to change status")
+    
+    for key, value in update_data.items():
+        if value is None:
+            continue
+        if not hasattr(incident, key):
+            raise ValueError(f"Unknown field: {key}")
+        setattr(incident, key, value)
 
     db.commit()
     db.refresh(incident)

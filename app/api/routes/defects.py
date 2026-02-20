@@ -1,5 +1,5 @@
 from uuid import UUID
-from fastapi import APIRouter, Depends, HTTPException, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from app.core.auth import get_api_key, require_scopes
 from app.db.models import Defect, DefectAuditLog
 from app.db.session import get_db

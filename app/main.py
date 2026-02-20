@@ -3,6 +3,7 @@ from app.api.routes.defects import router as defects
 from app.db.session import engine
 from app.db.base import Base
 from app.api.routes import auth
+from app.api.routes import safety
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -23,4 +24,5 @@ def health_check():
 
 app.include_router(defects, prefix="/api")
 app.include_router(auth.router, prefix="/api")
+app.include_router(safety.router, prefix="/api")
 

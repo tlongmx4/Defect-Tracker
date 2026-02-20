@@ -1,9 +1,10 @@
-from sqlalchemy import Column, Text, DateTime, ForeignKey, UniqueConstraint
+from sqlalchemy import Column, Text, DateTime, ForeignKey, UniqueConstraint, String, Enum
 from app.db.base import Base
 from datetime import datetime
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 import uuid
+from app.domains.enums import IncidentSeverity, IncidentStatus
 
 
 class Defect(Base):
@@ -60,3 +61,24 @@ class RoleScope(Base):
     role_id = Column(UUID(as_uuid=True), ForeignKey('roles.id'), nullable=False)
     scope_id = Column(UUID(as_uuid=True), ForeignKey('scopes.id'), nullable=False)
 
+class SafetyIncident(Base):
+    __tablename__ = 'safety_incidents'
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    reported_by = Column(UUID(as_uuid=True), ForeignKey('users.id'), nullable=False)
+    severity = Column(Enum(IncidentSeverity), nullable=False)
+    description = Column(Text, nullable=True)
+    location = Column(String, nullable=False)
+    department = Column(String, nullable=False)
+    shift = Column(String, nullable=False)
+    status = Column(Enum(IncidentStatus), nullable=False, default=IncidentStatus.OPEN)
+    corrective_action = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+class SafetyIncidentAuditLog(Base):
+    __tablename__ = 'safety_incident_audit_logs'
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    incident_id = Column(UUID(as_uuid=True), ForeignKey('safety_incidents.id'), nullable=False)
+    changed_by = Column(UUID(as_uuid=True), ForeignKey('users.id'), nullable = False)
+    old_status = Column(Enum(IncidentStatus), nullable=False)
+    new_status = Column(Enum(IncidentStatus), nullable=False)
+    changed_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
