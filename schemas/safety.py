@@ -34,4 +34,16 @@ class SafetyIncidentOut(BaseModel):
     class Config:
         from_attributes=True
 
+class SafetyIncidentAuditLogOut(BaseModel):
+    id: UUID
+    incident_id: UUID
+    changed_by: UUID
+    old_status: IncidentStatus
+    new_status: IncidentStatus
+    changed_at: datetime
 
+    class Config:
+        from_attributes = True  # or orm_mode = True for Pydantic v1
+
+class SafetyIncidentStatusUpdate(BaseModel):
+    status: IncidentStatus

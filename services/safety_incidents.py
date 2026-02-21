@@ -83,3 +83,6 @@ def list_incidents(db: Session, limit: int, offset: int, status: IncidentStatus 
     items = base_query.order_by(SafetyIncident.created_at.desc()).offset(offset).limit(limit).all()
     return items, total
 
+def get_incident(db: Session, incident_id: UUID) -> SafetyIncident | None:
+    return (db.query(SafetyIncident).filter(SafetyIncident.id == incident_id).first())
+
