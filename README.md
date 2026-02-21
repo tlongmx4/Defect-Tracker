@@ -1,182 +1,106 @@
-Defect Tracker API
+Defect Tracker (v2)
 
-A backend service for tracking manufacturing defects, including authenticated updates, status transition auditing, and query filtering.
+Defect Tracker is a modular backend system designed for manufacturing environments to manage quality defects, safety incidents, and operational workflows with structured lifecycle control and role-based access.
 
-This project demonstrates layered backend architecture, API design best practices, and controlled data integrity using FastAPI and PostgreSQL.
+Built with FastAPI, SQLAlchemy, and PostgreSQL.
 
-🚀 Features
+Architecture
 
-Create, read, and update defects
+FastAPI for API layer
 
-API key authentication for write operations
+SQLAlchemy ORM for domain modeling
 
-Enum validation for defect status (open, repaired)
+PostgreSQL for persistence
 
-Filtering by status and category
+JWT Authentication
 
-Validated sorting (ascending / descending)
+Database-driven RBAC (Users → Roles → Scopes)
 
-Pagination support (limit, offset)
+Service layer pattern (routers → services → models)
 
-Automatic lifecycle timestamps (created_at, updated_at)
+Enum-backed workflow state machines
 
-Actor tracking via updated_by
+Audit logging for lifecycle transitions
 
-Audit logging for defect status transitions
+The system separates HTTP concerns from business logic using a service layer to enforce domain rules and workflow integrity.
 
-Endpoint for retrieving audit history per defect
+Modules
+Quality Module (Defects)
 
-🏗 Architecture Overview
+Create and manage manufacturing defects
 
-The service follows a clean layered architecture:
+Status tracking
 
-routes/        → HTTP layer (FastAPI endpoints)
-schemas/       → Pydantic request/response models
-services/      → Business logic and domain rules
-db/models.py   → SQLAlchemy ORM models
-PostgreSQL     → Persistent storage
+Filtering and pagination
 
+Scope-based access control
 
-Key design decisions:
+Safety Module (Incidents) — v2
 
-Business logic lives in the service layer (not routes).
+Implements structured safety incident tracking with enforced workflow rules.
 
-Status transitions trigger audit events inside the update service.
+Features:
 
-Authentication is implemented via dependency injection.
+Incident creation with:
 
-Sorting is validated against a controlled field map to prevent unsafe queries.
+Severity (Near Miss, First Aid, Recordable, PSIF)
 
-PATCH uses exclude_unset=True to support partial updates correctly.
+Location
 
-🔐 Authentication
+Department
 
-Write operations require an API key sent via header:
+Shift
 
-X-API-Key: <your_api_key>
+Description
 
+Controlled status transitions:
 
-Protected endpoints:
+OPEN → INVESTIGATING → CORRECTIVE_ACTION → CLOSED
 
-POST /api/defects
+Business rule enforcement:
 
-PATCH /api/defects/{defect_id}
+Incidents cannot be closed without a documented corrective action
 
-Read operations are currently public.
+Full audit trail:
 
-📡 API Endpoints
-List Defects
-GET /api/defects
+Every status change is recorded
 
+Tracks old status, new status, user, and timestamp
 
-Query parameters:
+Scope-based authorization:
 
-limit
+safety:incidents:read
 
-offset
+safety:incidents:write
 
-status
+This module demonstrates lifecycle-driven domain modeling rather than simple CRUD behavior.
 
-category
+Authentication & Authorization
 
-sort_by (supports -field for descending)
+OAuth2 + JWT-based authentication
 
-Example:
+Role-based access control stored in the database
 
-GET /api/defects?status=open&sort_by=-updated_at
+Scope enforcement at the route level
 
-Create Defect (Auth Required)
-POST /api/defects
+Separation of read and write permissions
 
-Update Defect (Auth Required)
-PATCH /api/defects/{defect_id}
+Current Status
 
+Quality Module complete
 
-Automatically:
+Safety Module complete (workflow + audit logging)
 
-Updates updated_at
+RBAC fully implemented
 
-Sets updated_by
+Ready for additional domain modules
 
-Creates an audit log entry if status changes
+Planned Enhancements
 
-Get Defect Audit History
-GET /api/defects/{defect_id}/audit
+Production / Downtime Tracking module
 
+Reporting and export features
 
-Returns status transition history ordered by most recent change.
+Analytics and dashboard layer
 
-🧾 Example Response
-{
-  "id": "81c99e5d-0282-43fa-84d8-ca9ebf6c67e9",
-  "created_at": "2026-02-15T00:20:05.286848Z",
-  "updated_at": "2026-02-15T00:20:05.286848Z",
-  "reported_by": "audit 3",
-  "category": "loose",
-  "subcategory": "not torqued",
-  "description": "loose flywheel",
-  "absn": "3540",
-  "assigned_to": "assem-tool",
-  "status": "open",
-  "updated_by": "Demo User"
-}
-
-🗂 Audit Log Model
-
-Each status change creates an audit entry containing:
-
-defect_id
-
-changed_by
-
-old_status
-
-new_status
-
-changed_at
-
-This ensures traceability of state transitions.
-
-🛠 Tech Stack
-
-FastAPI
-
-SQLAlchemy
-
-PostgreSQL
-
-Docker
-
-Pydantic
-
-🔮 Future Enhancements
-
-Role-based authorization
-
-Soft deletes
-
-Full-text search
-
-Alembic migrations
-
-CI/CD integration
-
-🎯 Purpose
-
-This project demonstrates backend architecture fundamentals:
-
-Clean separation of concerns
-
-Safe query construction
-
-Authentication and identity tracking
-
-Event-driven audit logging
-
-Correct HTTP semantics
-
-Controlled domain validation
-
-Architectural Notes
-
-This project evolved from a broader operational event modeling exploration (see archived repository: incident-ops). Core architectural principles from that experiment have been refined and applied here in a focused manufacturing quality domain.
+Frontend UI integration
