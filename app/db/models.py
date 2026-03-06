@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Text, DateTime, ForeignKey, UniqueConstraint, String, Enum
+from sqlalchemy import Column, Integer, Text, DateTime, ForeignKey, UniqueConstraint, String, Enum
+from sqlalchemy.orm import relationship
 from app.db.base import Base
 from datetime import datetime
 from sqlalchemy.dialects.postgresql import UUID
@@ -83,3 +84,11 @@ class SafetyIncidentAuditLog(Base):
     new_status = Column(Enum(IncidentStatus), nullable=False)
     changed_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
+class TaktData(Base):
+    __tablename__ = 'takt_data'
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    timestamp = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    takt_time_seconds = Column(Integer, nullable=False)
+    event_id = Column(UUID(as_uuid=True), ForeignKey('production_events.id'), nullable=False)
+    event = relationship("ProductionEvent", back_populates="takt_data")
+    

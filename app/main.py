@@ -26,3 +26,4 @@ app.include_router(defects, prefix="/api")
 app.include_router(auth.router, prefix="/api")
 app.include_router(safety.router, prefix="/api")
 
+
