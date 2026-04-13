@@ -102,15 +102,3 @@ Quality Module complete
 Safety Module complete (workflow + audit logging)
 
 RBAC fully implemented
-
-Ready for additional domain modules
-
-Planned Enhancements
-
-Production / Downtime Tracking module
-
-Reporting and export features
-
-Analytics and dashboard layer
-
-Frontend UI integration
