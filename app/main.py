@@ -1,12 +1,12 @@
+from dotenv import load_dotenv
+load_dotenv()
+
 from fastapi import FastAPI
 from app.api.routes.defects import router as defects
 from app.db.session import engine
 from app.db.base import Base
 from app.api.routes import auth
 from app.api.routes import safety
-from dotenv import load_dotenv
-
-load_dotenv()
 
 app = FastAPI(title="Defect Tracker API")
 
