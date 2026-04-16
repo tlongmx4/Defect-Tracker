@@ -7,12 +7,16 @@ from app.db.session import engine
 from app.db.base import Base
 from app.api.routes import auth
 from app.api.routes import safety
+from contextlib import asynccontextmanager
 
-app = FastAPI(title="Defect Tracker API")
-
-@app.on_event("startup")
-def startup_event():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
+    print("Starting up...")
+    yield
+    print("Shutting down...")
+
+app = FastAPI(title="Defect Tracker API", lifespan=lifespan)
 
 @app.get("/")
 def read_root():
