@@ -31,7 +31,7 @@ class SafetyIncidentOut(BaseModel):
     reported_by: UUID
     created_at: datetime
 
-    class Config:
+    class ConfigDict:
         from_attributes=True
 
 class SafetyIncidentAuditLogOut(BaseModel):
@@ -42,7 +42,7 @@ class SafetyIncidentAuditLogOut(BaseModel):
     new_status: IncidentStatus
     changed_at: datetime
 
-    class Config:
+    class ConfigDict:
         from_attributes = True  # or orm_mode = True for Pydantic v1
 
 class SafetyIncidentStatusUpdate(BaseModel):
