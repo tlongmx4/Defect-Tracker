@@ -7,7 +7,7 @@ from app.core.auth import get_current_user, require_scopes
 from schemas.safety import SafetyIncidentCreate, SafetyIncidentAuditLogOut, SafetyIncidentUpdate, SafetyIncidentOut, SafetyIncidentStatusUpdate
 from uuid import UUID
 
-router = APIRouter(prefix="/api/safety/incidents", tags=["Safety"])
+router = APIRouter(prefix="/safety/incidents", tags=["Safety"])
 
 @router.post("", dependencies=[Depends(require_scopes(["safety:incidents:write"]))], response_model=SafetyIncidentOut, status_code=201)
 def create_safety_incident(payload: SafetyIncidentCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
