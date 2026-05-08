@@ -1,8 +1,8 @@
 # Defect Tracker
 
-A modular backend system for managing manufacturing quality defects, safety incidents, and operational workflows — with structured lifecycle control, database-driven role-based access, and full audit history.
+A modular full-stack system for managing manufacturing quality defects, safety incidents, and operational workflows — with structured lifecycle control, database-driven role-based access, and full audit history.
 
-Built with **FastAPI**, **SQLAlchemy**, and **PostgreSQL**.
+Built with **FastAPI**, **SQLAlchemy**, **PostgreSQL**, **React**, and **TypeScript**.
 
 ---
 
@@ -18,6 +18,7 @@ This project is what a defect and safety system would look like if it were desig
 
 | Layer | Technology |
 |-------|------------|
+| Frontend | React + TypeScript + Vite |
 | API | FastAPI |
 | ORM | SQLAlchemy |
 | Database | PostgreSQL |
@@ -37,10 +38,18 @@ The system separates HTTP concerns from business logic using a service layer to 
 ```bash
 git clone https://github.com/tlongmx4/Defect-Tracker.git
 cd Defect-Tracker
+
+# Start backend
 docker compose up --build
+
+# In another terminal, start frontend
+cd frontend
+npm install
+npm run dev
 ```
 
-The API will be available at `http://localhost:8000`, with interactive Swagger docs at `http://localhost:8000/docs`.
+The API will be available at `http://localhost:8000`, with interactive Swagger docs at `http://localhost:8000/docs`.  
+The frontend will run at `http://localhost:5173`.
 
 ---
 
@@ -57,22 +66,57 @@ The API will be available at `http://localhost:8000`, with interactive Swagger d
 Structured safety incident tracking with enforced workflow rules.
 
 **Incident attributes:**
+
 - Severity: `NEAR_MISS`, `FIRST_AID`, `RECORDABLE`, `PSIF`
 - Location, Department, Shift, Description
 
 **Controlled state transitions:**
-```
+
+```text
 OPEN → INVESTIGATING → CORRECTIVE_ACTION → CLOSED
 ```
 
 **Enforced business rules:**
+
 - Incidents cannot move to `CLOSED` without a documented corrective action
 - Invalid transitions are rejected at the service layer before the database is touched
 
 **Audit trail:**
+
 - Every status change records old status, new status, user, and timestamp
 
 **Scopes:** `safety:incidents:read`, `safety:incidents:write`
+
+---
+
+## Frontend
+
+A modern React application providing a user interface for the defect tracking system.
+
+**Tech Stack:**
+
+- React 19 with TypeScript
+- Vite for build tooling
+- Tailwind CSS for styling
+- TanStack React Query for data fetching
+- shadcn/ui for component library
+- React Router for navigation
+
+**Features:**
+
+- Type-safe API integration matching backend schemas
+- Responsive UI components
+- Form handling for defects and safety incidents
+- Real-time status updates and audit trails
+
+**Development:**
+
+```bash
+cd frontend
+npm install
+npm run dev  # Starts dev server on :5173
+npm run build  # Production build
+```
 
 ---
 
@@ -129,13 +173,16 @@ Splitting `safety:incidents:read` from `safety:incidents:write` (and the same fo
 - ✅ RBAC fully implemented
 - ✅ JWT authentication
 - ✅ Dockerized for local development
+- ✅ Frontend API integration and type safety
+- ✅ React + TypeScript setup with modern tooling
 
 ## Roadmap
 
 - Production / Downtime Tracking module
 - Reporting and export features
 - Analytics and dashboard layer
-- Frontend UI integration
+- Custom React components and UI
+- Authentication integration in frontend
 - Test suite (pytest) for service layer and state transitions
 
 ---
