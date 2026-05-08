@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from app.api.routes.defects import router as defects
 from app.db.session import engine
 from app.db.base import Base
@@ -17,6 +18,14 @@ async def lifespan(app: FastAPI):
     print("Shutting down...")
 
 app = FastAPI(title="Defect Tracker API", lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localthost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 @app.get("/")
 def read_root():
