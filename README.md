@@ -17,7 +17,7 @@ This project is what a defect and safety system would look like if it were desig
 ## Architecture
 
 | Layer | Technology |
-|-------|------------|
+| ------- | | ------------|  
 | Frontend | React + TypeScript + Vite |
 | API | FastAPI |
 | ORM | SQLAlchemy |
