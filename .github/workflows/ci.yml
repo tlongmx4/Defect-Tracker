@@ -9,6 +9,20 @@ on:
 jobs:
   verify-backend:
     runs-on: ubuntu-latest
+    services:
+      postgres-test:
+        image: postgres15
+        env:
+          POSTGRES_DB: defect_tracker_test
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_USER: test_user
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
     - name: Checkout repository code
       uses: actions/checkout@v4
@@ -26,6 +40,8 @@ jobs:
         pip install pytest
 
     - name: Run Backend Test Suite
+      env:
+        DATABASE_URL: postgresql://test_user:test_password@localhost:5432/defect_tracker_test
       run: |
         cd backend
         pytest
