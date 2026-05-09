@@ -41,7 +41,7 @@ jobs:
 
     - name: Run Backend Test Suite
       env:
-        DATABASE_URL: postgresql://test_user:test_password@localhost:5432/defect_tracker_test
+        TEST_DATABASE_URL: postgresql://test_user:test_password@localhost:5432/defect_tracker_test
       run: |
         cd backend
         pytest
