@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres-test:
-        image: postgres15
+        image: postgres:15
         env:
           POSTGRES_DB: defect_tracker_test
           POSTGRES_PASSWORD: test_password
