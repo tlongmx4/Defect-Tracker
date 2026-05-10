@@ -9,13 +9,6 @@ export function useDefects() {
   });
 }
 
-export function useDefect(id: string) {
-  return useQuery<Defect, Error>({
-    queryKey: ['defects', id],
-    queryFn: () => defectsApi.get(id),
-  });
-}
-
 export function useCreateDefect() {
   const queryClient = useQueryClient();
 
@@ -33,25 +26,7 @@ export function useUpdateDefect() {
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<DefectUpdate> }) => 
       defectsApi.update(id, data),
-    onMutate: async ({ id, data }) => {
-      await queryClient.cancelQueries({ queryKey: ['defects'] });
-      const previousDefects = queryClient.getQueryData<Defect[]>(['defects']);
-
-      if (previousDefects) {
-        queryClient.setQueryData<Defect[]>(['defects'], 
-          previousDefects.map(d => d.id === id ? { ...d, ...data } : d)
-        );
-      }
-
-      return { previousDefects };
-    },
-    onError: (_err, _variables, context) => {
-      if (context?.previousDefects) {
-        queryClient.setQueryData(['defects'], context.previousDefects);
-      }
-      // Suggestion: Trigger a toast notification here
-    },
-    onSettled: () => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['defects'] });
     },
   });
@@ -63,31 +38,7 @@ export function useTransitionDefectStatus() {
   return useMutation({
     mutationFn: ({ id, newStatus }: { id: string; newStatus: DefectStatus }) => 
       defectsApi.transitionStatus(id, newStatus),
-    // Optimistic Update Implementation
-    onMutate: async ({ id, newStatus }) => {
-      // Cancel any outgoing refetches so they don't overwrite our optimistic update
-      await queryClient.cancelQueries({ queryKey: ['defects'] });
-
-      // Snapshot the previous value
-      const previousDefects = queryClient.getQueryData<Defect[]>(['defects']);
-
-      // Optimistically update to the new value
-      if (previousDefects) {
-        queryClient.setQueryData<Defect[]>(['defects'], 
-          previousDefects.map(d => d.id === id ? { ...d, status: newStatus } : d)
-        );
-      }
-
-      return { previousDefects };
-    },
-    onError: (_err, _variables, context) => {
-      // Roll back to the previous state if the mutation fails
-      if (context?.previousDefects) {
-        queryClient.setQueryData(['defects'], context.previousDefects);
-      }
-    },
-    onSettled: () => {
-      // Always refetch after error or success to ensure sync with server
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['defects'] });
     },
   });
